@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { WebSocketServer } from "ws";
 import { SocketEnums } from "./common/common-data.js";
 
-class MyWebSocketServer {
+export default class MyWebSocketServer {
   _adminSocket;
   _clients;
   _socketPort;
@@ -30,53 +30,49 @@ class MyWebSocketServer {
     };
   }
   startServer() {
-    this._adminSocket.on("connection", this.onClientConnection);
+    this._adminSocket.on("connection", this.onClientConnection.bind(this));
     console.log(`Listening on port: ${this._socketPort}`);
   }
-
   onClientConnection(ws) {
     const uuid = this.sendRegistrationToClient(ws);
-    ws.on("message", this.onMessageReceived, message, uuid);
-    ws.on("close", this.onClose, err, uuid);
-    ws.on("error", this.onError, err, uuid);
-  }
-  onMessageReceived(message, uuid) {
-    // console.log(message);
-    const msg = JSON.parse(message);
-    const applicableWebsockets = this.getApplicableWebsockets(msg.toClientId);
-    if (msg.type === SocketEnums.ClientRegister) {
-      this.registerWebsocket(uuid, msg.data, ws);
-    } else if (msg.type === SocketEnums.PING) {
-      applicableWebsockets.forEach((websocket) => {
-        websocket.socket.send(JSON.stringify({ type: "PONG", data: "PONG" }));
-      });
-    } else if (applicableWebsockets.length > 0) {
-      if (this.isValidWebsocketMessageType(msg.type)) {
-        applicableWebsockets.forEach((websocket) => {
-          websocket.socket.send(this.formatDataForWebsocket(msg.type, msg.data));
-        });
+    ws.on("close", (error) => {
+      if (error) {
+        console.log(error);
       }
-    }
-  }
-  onError(error, uuid) {
-    console.log(error);
-  }
-  onClose(error, uuid) {
-    if (error) {
+      this.removeWebsocket(uuid);
+    });
+    ws.on("error", () => {
       console.log(error);
-    }
-    this.removeWebsocket(uuid);
+    });
+    ws.on("message", (message) => {
+      // console.log("server receives message: " + message);
+      const msg = JSON.parse(message);
+      console.log("Parsed MEssage: " + msg);
+      const applicableWebsockets = this.getApplicableWebsockets(msg.toClientId);
+      if (msg.type === SocketEnums.ClientRegister) {
+        this.registerWebsocket(uuid, msg.data, ws);
+      } else if (msg.type === SocketEnums.PING) {
+        applicableWebsockets.forEach((websocket) => {
+          websocket.socket.send(JSON.stringify({ type: "PONG", data: "PONG" }));
+        });
+      } else if (applicableWebsockets.length > 0) {
+        if (this.isValidWebsocketMessageType(msg.type)) {
+          applicableWebsockets.forEach((websocket) => {
+            websocket.socket.send(this.formatDataForWebsocket(msg.type, msg.data));
+          });
+        }
+      }
+    });
   }
-
   getApplicableWebsockets(clientId) {
-    const foundWebsockets = this.clients.filter((socket) => {
+    const foundWebsockets = this._clients.filter((socket) => {
       return socket.id === clientId;
     });
     return foundWebsockets;
   }
   formatDataForWebsocket(dataType, rawData) {
     if (SocketEnums[dataType] !== "PING") {
-      console.log(`DataType: ${dataType} / RawData: ${rawData}`);
+      console.log(`DataType: ${dataType} / RawData: ${JSON.stringify(rawData)}`);
     }
     return JSON.stringify({ type: dataType, data: rawData });
   }
@@ -88,11 +84,11 @@ class MyWebSocketServer {
   }
   registerWebsocket(uniqueId, clientId, websocket) {
     console.log(`Adding client ${clientId} with UIID ${uniqueId}`);
-    this.clients.push({ uuid: uniqueId, id: clientId, socket: websocket });
+    this._clients.push({ uuid: uniqueId, id: clientId, socket: websocket });
   }
   removeWebsocket(uniqueId) {
-    console.log(`Attempting to remove client with UIID ${uniqueId}`);
-    this.clients = this.clients.filter((sockets) => {
+    console.log(`Removeing client with UIID ${uniqueId}`);
+    this._clients = this._clients.filter((sockets) => {
       return sockets.uuid !== uniqueId;
     });
   }
@@ -101,15 +97,5 @@ class MyWebSocketServer {
       return false;
     }
     return true;
-    // let validMessageType = false;
-    // for (let socketEnum in SocketEnums) {
-    //   validMessageType = validMessageType || socketEnum == messageType;
-    //   // console.log(`checking msgType:${msg.type} again ${socketEnum} result:${(socketEnum == msg.type)}`);
-    // }
-    // //ignore pings and registers
-    // validMessageType = messageType !== "PING";
-    // validMessageType = messageType !== "ClientRegister";
-    // return validMessageType;
   }
 }
-export { MyWebSocketServer };
