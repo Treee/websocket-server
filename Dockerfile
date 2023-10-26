@@ -5,7 +5,7 @@ ENV SERVER_PORT ${server_port}
 
 RUN apk add --update npm
 
-WORKDIR /aoe-websocket-server
+WORKDIR /websocket-server
 COPY package.json /websocket-server/package.json
 RUN npm install 
 
