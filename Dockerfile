@@ -10,7 +10,6 @@ COPY package.json /websocket-server/package.json
 RUN npm install 
 
 COPY . /websocket-server
-RUN npm run build
 
 EXPOSE ${server_port}
 
