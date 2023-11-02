@@ -1,1 +1,1 @@
-docker build . --build-arg server_port=8443 -t websocket-server:latest
+docker build . --build-arg server_port=3000 -t websocket-server:latest
