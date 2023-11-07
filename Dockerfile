@@ -1,7 +1,7 @@
 FROM alpine
 
 ARG server_port
-ENV SERVER_PORT ${server_port}
+ENV SERVER_PORT 3000
 
 RUN apk add --update npm
 
@@ -11,6 +11,6 @@ RUN npm install
 
 COPY . /websocket-server
 
-EXPOSE ${server_port}
+EXPOSE 3000
 
 CMD ["npm", "start"]
