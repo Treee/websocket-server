@@ -7,8 +7,11 @@ export default class MyWebSocketServer {
   _clients;
   _socketPort;
   _isDebug = true;
-  constructor() {
+
+  _httpsServer;
+  constructor(httpsServer) {
     this._clients = [];
+    // this._httpsServer = httpsServer;
 
     // const serverOptions = this.buildServerOptions();
     // this._adminSocket = new WebSocketServer(serverOptions);
@@ -31,6 +34,7 @@ export default class MyWebSocketServer {
   }
   startServer(httpsServer) {
     this._adminSocket = new WebSocketServer({
+      // server: this._httpsServer,
       server: httpsServer,
     });
 

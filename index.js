@@ -18,7 +18,7 @@ httpsServer.listen(8443, "0.0.0.0", function listening() {
 
   myWebSocket.on("error", console.error);
   // myWebSocket.on("open", function open() {
-  //   // myWebSocket.send("data sent");
+  //   myWebSocket.send("data sent");
   // });
 });
 // const express = require("express");
