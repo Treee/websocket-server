@@ -10,14 +10,14 @@ export default class MyWebSocketServer {
   constructor() {
     this._clients = [];
 
-    const serverOptions = this.buildServerOptions();
-    this._adminSocket = new WebSocketServer(serverOptions);
+    // const serverOptions = this.buildServerOptions();
+    // this._adminSocket = new WebSocketServer(serverOptions);
 
-    process.on("SIGHUP", () => {
-      this._adminSocket.close();
-      console.log("SIGHUP ERROR:: CLOSING CLIENT");
-      process.exit();
-    });
+    // process.on("SIGHUP", () => {
+    //   this._adminSocket.close();
+    //   console.log("SIGHUP ERROR:: CLOSING CLIENT");
+    //   process.exit();
+    // });
   }
   buildServerOptions() {
     if (process.env.SERVER_PORT === undefined) {
@@ -29,7 +29,17 @@ export default class MyWebSocketServer {
       port: this._socketPort,
     };
   }
-  startServer() {
+  startServer(httpsServer) {
+    this._adminSocket = new WebSocketServer({
+      server: httpsServer,
+    });
+
+    process.on("SIGHUP", () => {
+      this._adminSocket.close();
+      console.log("SIGHUP ERROR:: CLOSING CLIENT");
+      process.exit();
+    });
+
     this._adminSocket.on("connection", this.onClientConnection.bind(this));
     console.log(`Listening on port: ${this._socketPort}`);
   }

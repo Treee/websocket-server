@@ -1,8 +1,26 @@
+import { readFileSync } from "fs";
+import { createServer } from "https";
 import MyWebSocketServer from "./src/websocket-server.js";
+import { WebSocket } from "ws";
+
+const httpsServer = createServer({
+  cert: readFileSync("./keys/original_cert.pem"),
+  key: readFileSync("./keys/original_cert_key.pem"),
+});
 
 const mySocketServer = new MyWebSocketServer();
-mySocketServer.startServer();
+mySocketServer.startServer(httpsServer);
 
+httpsServer.listen(8443, "0.0.0.0", function listening() {
+  const myWebSocket = new WebSocket(`wss://localhost:8443`, {
+    rejectUnauthorized: false,
+  });
+
+  myWebSocket.on("error", console.error);
+  myWebSocket.on("open", function open() {
+    myWebSocket.send("data sent");
+  });
+});
 // const express = require("express");
 // import express from "express";
 // const app = express();
