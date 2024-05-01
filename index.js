@@ -45,7 +45,7 @@ wss.on("connection", function connection(ws) {
   ws.on("message", function message(data) {
     console.log("ON MESSAGE: %s ---- END.", data);
     // console.log("server receives message: " + message);
-    const msg = JSON.parse(message);
+    const msg = JSON.parse(data);
     console.log("PARSED MESSAGE:" + msg);
     const applicableWebsockets = getApplicableWebsockets(msg.toClientId);
     if (msg.type === SocketEnums.ClientRegister) {
