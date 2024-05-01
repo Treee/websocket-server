@@ -3,6 +3,15 @@ import { createServer } from "https";
 import { WebSocketServer } from "ws";
 import { randomUUID } from "crypto";
 
+const SocketEnums = {
+  ClientRegister: "ClientRegister",
+  ClientUnRegister: "ClientUnRegister",
+  PING: "PING",
+  PONG: "PONG",
+  TEST: "TEST",
+  AGEOVERLAYPUSH: "AGEOVERLAYPUSH",
+};
+
 const httpsServer = createServer({
   cert: readFileSync("./keys/original_cert.pem"),
   key: readFileSync("./keys/original_cert_key.pem"),
