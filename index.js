@@ -38,10 +38,12 @@ process.on("SIGHUP", () => {
 
 wss.on("connection", function connection(ws) {
   const uuid = sendRegistrationToClient(ws);
+  console.log(`NEW CLIENT CONNECTION. NEW GUID:${uuid}`);
+
   ws.on("error", console.error);
 
   ws.on("message", function message(data) {
-    console.log("MESSAGE: %s", data);
+    console.log("ON MESSAGE: %s ---- END.", data);
     // console.log("server receives message: " + message);
     const msg = JSON.parse(message);
     console.log("PARSED MESSAGE:" + msg);
@@ -97,6 +99,7 @@ function formatDataForWebsocket(dataType, rawData) {
 */
 function isValidWebsocketMessageType(messageType) {
   if (SocketEnums[messageType] === undefined) {
+    console.log(`INVALID MESSAGE TYPE ${messageType}`);
     return false;
   }
   return true;
@@ -125,6 +128,7 @@ function registerClientWebsocket(uniqueId, clientId, websocket) {
     This has the chance to return multiple websockets
 */
 function getApplicableWebsockets(clientId) {
+  console.log(`SEARCHING FOR WEB SOCKETS FROM ${clientId}`);
   const foundWebsockets = _clients.filter((socket) => {
     return socket.id === clientId;
   });
