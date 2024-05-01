@@ -121,7 +121,7 @@ function removeClientWebsocket(uniqueId) {
 */
 function registerClientWebsocket(uniqueId, clientId, websocket) {
   console.log(`ADDING CLIENT ${clientId} WITH UIID ${uniqueId}`);
-  this._clients.push({ uuid: uniqueId, id: clientId, socket: websocket });
+  _clients.push({ uuid: uniqueId, id: clientId, socket: websocket });
 }
 /*
     Search through the list and find the websockets that match the CLIENT ID.
