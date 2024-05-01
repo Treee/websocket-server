@@ -16,6 +16,7 @@ const httpsServer = createServer({
   cert: readFileSync("./keys/original_cert.pem"),
   key: readFileSync("./keys/original_cert_key.pem"),
 });
+
 httpsServer.addListener("upgrade", (req, res, head) => console.log("UPGRADE:", req.url));
 httpsServer.on("error", (err) => console.error(err));
 httpsServer.listen(8443, () => console.log("HTTPS RUNNING ON PORT:8443"));
