@@ -4,16 +4,14 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=node /home/ec2-user/websocket-server/index.js
+ExecStart=/home/ec2-user/.nvm/versions/node/v20.12.2/bin/node /home/ec2-user/websocket-server/index.js
 Restart=always
 User=ec2-user
 
 # Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
-Group=nobody
 Environment=PATH=/home/ec2-user/.nvm/versions/node/v20.12.2/bin
-Environment=NODE_ENV=production
-PIDFile=/tmp/aoe-socket-server.pid
 KillSignal=SIGQUIT
+PIDFile=/home/ec2-user/websocket-server/tmp/aoe-socket-server.pid
 WorkingDirectory=/home/ec2-user/websocket-server
 
 [Install]
