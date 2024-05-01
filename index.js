@@ -1,47 +1,22 @@
 import { readFileSync } from "fs";
 import { createServer } from "https";
-import MyWebSocketServer from "./src/websocket-server.js";
-import { WebSocket } from "ws";
+import { WebSocketServer } from "ws";
 
 const httpsServer = createServer({
   cert: readFileSync("./keys/original_cert.pem"),
   key: readFileSync("./keys/original_cert_key.pem"),
 });
+httpsServer.addListener("upgrade", (req, res, head) => console.log("UPGRADE:", req.url));
+httpsServer.on("error", (err) => console.error(err));
+httpsServer.listen(8443, () => console.log("Https running on port 8443"));
 
-const mySocketServer = new MyWebSocketServer();
-mySocketServer.startServer(httpsServer);
+const wss = new WebSocketServer({ server: httpsServer, path: "/echo" });
+wss.on("connection", function connection(ws) {
+  ws.on("error", console.error);
 
-httpsServer.listen(8443, "0.0.0.0", function listening() {
-  const myWebSocket = new WebSocket(`wss://localhost:8443`, {
-    rejectUnauthorized: false,
+  ws.on("message", function message(data) {
+    console.log("received: %s", data);
   });
 
-  myWebSocket.on("error", console.error);
-  // myWebSocket.on("open", function open() {
-  //   myWebSocket.send("data sent");
-  // });
+  ws.send("Hello");
 });
-// const express = require("express");
-// import express from "express";
-// const app = express();
-
-// app.listen(3000, () => {
-//   console.log("Application started and Listening on port 3000");
-// });
-
-// const text = `
-// <!DOCTYPE html>
-// <html>
-//   <head> </head>
-//   <body>
-//     <div class="center_div">
-//       <h1>Hello World!</h1>
-//       <p>This example contains some advanced CSS methods you may not have learned yet. But, we will explain these methods in a later chapter in the tutorial.</p>
-//     </div>
-//   </body>
-// </html>
-// `;
-
-// app.get("/", (req, res) => {
-//   res.send(text);
-// });

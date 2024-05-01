@@ -33,18 +33,18 @@ export default class MyWebSocketServer {
     };
   }
   startServer(httpsServer) {
-    this._adminSocket = new WebSocketServer({
-      // server: this._httpsServer,
-      server: httpsServer,
-    });
+    // this._adminSocket = new WebSocketServer({
+    //   // server: this._httpsServer,
+    //   server: httpsServer,
+    // });
 
-    process.on("SIGHUP", () => {
-      this._adminSocket.close();
-      console.log("SIGHUP ERROR:: CLOSING CLIENT");
-      process.exit();
-    });
+    // process.on("SIGHUP", () => {
+    //   this._adminSocket.close();
+    //   console.log("SIGHUP ERROR:: CLOSING CLIENT");
+    //   process.exit();
+    // });
 
-    this._adminSocket.on("connection", this.onClientConnection.bind(this));
+    // this._adminSocket.on("connection", this.onClientConnection.bind(this));
     console.log(`Listening on port: ${this._socketPort}`);
   }
   onClientConnection(ws) {
