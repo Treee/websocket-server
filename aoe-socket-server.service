@@ -1,5 +1,6 @@
 [Unit]
 Description=AoE Socket Server for Technology Widget
+After=network.target
 
 [Service]
 Type=simple
