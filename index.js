@@ -21,7 +21,7 @@ httpsServer.on("error", (err) => console.error(err));
 httpsServer.listen(8443, () => console.log("HTTPS RUNNING ON PORT:8443"));
 
 const wss = new WebSocketServer({ server: httpsServer, path: "/echo" });
-const _clients = [];
+let _clients = [];
 
 /*
     Catestrophic error occured. Attempt to be graceful
